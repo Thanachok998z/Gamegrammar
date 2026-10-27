@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#15172b">
+  <title>Lost Letters — Local AI Edition</title>
+  <meta name="description" content="เกมฝึกอ่านและเขียนอีเมลภาษาอังกฤษ สไตล์ Pixel/Retro พร้อมตรวจคำตอบผ่าน Ollama ในเครื่องหรือโหมด Demo">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="sky" aria-hidden="true"><span class="star s1">✦</span><span class="star s2">✧</span><span class="star s3">✦</span><span class="star s4">✧</span></div>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark" aria-hidden="true">✉<span>★</span></div><div><strong>LOST LETTERS</strong><small>THE ENGLISH REPLY QUEST</small></div></div>
+      <div class="top-center"><span class="status-lamp" id="statusLamp"></span><span id="connectionLabel">Checking local AI...</span><button class="tiny-refresh" id="refreshStatus" title="ตรวจสถานะอีกครั้ง" aria-label="ตรวจสถานะ Ollama อีกครั้ง">↻</button></div>
+      <div class="player-chip"><span class="coin" aria-hidden="true">✦</span><strong id="totalXp">0</strong><span>XP</span><span class="top-sep"></span><span>LV <b id="playerLevel">1</b></span></div>
+    </header>
+
+    <div class="main-grid">
+      <aside class="sidebar panel">
+        <div class="side-heading">✦ ADVENTURE MAP</div>
+        <div class="welcome-card"><span class="welcome-spark">✧</span><small>WELCOME BACK, WRITER!</small><strong>Every reply<br>moves the story.</strong><div class="progress-rail"><span id="levelProgress"></span></div><div class="progress-caption"><span id="xpProgressText">0 / 100 XP</span><span>NEXT LEVEL →</span></div></div>
+        <div class="nav-heading"><span>MAIL WORLDS</span><span>10</span></div>
+        <nav id="categoryNav" aria-label="หมวดอีเมล"></nav>
+        <div class="sidebar-note"><span>✦</span><div><strong>HOW TO PLAY</strong><p>อ่านจดหมาย → เขียนตอบ → รับคะแนน → เก็บ XP</p></div></div>
+      </aside>
+
+      <section class="inbox panel" aria-label="กล่องจดหมาย">
+        <div class="inbox-head"><div><div class="eyebrow">YOUR MAILBOX</div><h1>Inbox <span id="mailCount">/ 03</span></h1></div><div class="mail-icon" aria-hidden="true">✉</div></div>
+        <div class="level-label">CHOOSE YOUR LEVEL <span>✦</span></div>
+        <div class="level-switch" role="group" aria-label="ระดับภาษา"><button type="button" data-level="A2">A2<span>STARTER</span></button><button type="button" data-level="B1">B1<span>EXPLORER</span></button><button type="button" data-level="B2">B2<span>MASTER</span></button></div>
+        <div class="inbox-subhead"><span id="selectedCategory">ALL LETTERS</span><span id="inboxCounter">01 / 10</span></div>
+        <div class="mail-list" id="mailList"></div>
+        <div class="inbox-footer"><span class="footer-dot"></span> NEW STORIES, NEW WORDS, NEW YOU</div>
+      </section>
+
+      <main class="desk panel">
+        <div class="desk-top"><div class="breadcrumb"><span>✉ INBOX</span><span class="crumb-divider">/</span><span id="crumbCategory">ALL LETTERS</span><span class="crumb-divider">/</span><strong id="crumbNumber">LETTER 01</strong></div><span class="desk-top-right">⌁ <span id="wordGoalTop">A2 LEVEL</span></span></div>
+        <article class="letter-card">
+          <div class="letter-tape" aria-hidden="true"></div>
+          <div class="letter-meta"><div class="sender-avatar" id="senderAvatar">E</div><div><div class="meta-label">FROM</div><strong id="senderName">Emma</strong><small id="senderEmail">emma@example.com</small></div><div class="postage" aria-hidden="true"><span>LOST<br>LETTERS</span><b>✦</b></div></div>
+          <div class="subject-line"><span>SUBJECT:</span><strong id="letterSubject"></strong></div>
+          <div class="letter-body" id="letterBody"></div>
+          <div class="letter-bottom"><span id="letterTag">✦ EVERYDAY LIFE</span><span id="letterIndex">LETTER 01 / 10</span></div>
+        </article>
+
+        <div class="compose-head"><div><span class="section-pixel">✦</span><div><div class="eyebrow">YOUR TURN, WRITER!</div><h2>Write a reply</h2></div></div><button type="button" id="clearDraft" class="text-button">↺ CLEAR DRAFT</button></div>
+        <div class="compose-card"><div class="compose-to">TO: <strong id="composeRecipient"></strong><span class="compose-cursor" aria-hidden="true">▌</span></div><label class="sr-only" for="replyText">เขียนอีเมลตอบเป็นภาษาอังกฤษ</label><textarea id="replyText" spellcheck="true" placeholder="Dear ...&#10;&#10;Thank you for your email. ...&#10;&#10;Best regards,&#10;Your name"></textarea><div class="compose-footer"><span><span class="count-icon">✎</span> <strong id="wordCount">0</strong> WORDS <span id="wordTarget">/ TARGET 40–70</span></span><span id="draftSaved">DRAFT SAVED LOCALLY</span></div></div>
+        <div class="action-row"><button type="button" id="gradeButton" class="primary-button"><span>✦</span> CHECK MY REPLY <span>→</span></button><span id="gradeHint">Ready when you are!</span></div>
+        <section id="resultPanel" class="result-panel hidden" aria-live="polite"></section>
+        <section id="feedbackHistory" class="feedback-history hidden" aria-label="ผลตรวจที่บันทึกไว้"></section>
+      </main>
+
+      <aside class="helper panel" aria-label="ตัวช่วยเขียน"><div class="helper-head"><span class="helper-spark">✧</span><div><div class="eyebrow">YOUR LITTLE COMPANION</div><h2>Writing buddy</h2></div></div><div class="buddy-illustration" aria-hidden="true"><div class="buddy-stars">✦ &nbsp;&nbsp;&nbsp; ✧</div><div class="buddy-envelope"><span class="buddy-eye left"></span><span class="buddy-eye right"></span><span class="buddy-mouth"></span></div><div class="buddy-shadow"></div></div><div class="helper-intro">Stuck on a sentence? I’ve got your back! <span>✦</span></div>
+        <div class="helper-section"><div class="helper-title"><span>✦</span> QUEST CHECKLIST</div><div id="goalList" class="goal-list"></div></div>
+        <div class="helper-section"><div class="helper-title"><span>✧</span> HINTS <button type="button" id="toggleHints" aria-expanded="false">SHOW +</button></div><div id="hintList" class="hint-list hidden"></div><p class="helper-muted" id="hintPrompt">เปิดคำใบ้เมื่ออยากได้ไอเดียเริ่มต้น</p></div>
+        <div class="helper-section vocab-section"><div class="helper-title"><span>✦</span> VOCABULARY <button type="button" id="toggleVocab" aria-expanded="false">SHOW +</button></div><div id="vocabList" class="vocab-list hidden"></div><p class="helper-muted" id="vocabPrompt">คำศัพท์ที่ช่วยตอบจดหมายฉบับนี้</p></div>
+        <div class="helper-tail">KEEP GOING, YOU’RE DOING GREAT! <span>♡</span></div>
+      </aside>
+    </div>
+    <footer class="site-footer"><span>© LOST LETTERS · A LITTLE ENGLISH ADVENTURE</span><span>LOCAL-FIRST · MADE FOR PRACTICE ✦</span></footer>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>
